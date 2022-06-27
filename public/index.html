@@ -1,0 +1,272 @@
+<!doctype html>
+
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>E.S.T Design</title>
+	<link rel="stylesheet" href="./css/style.css" type="text/css">
+	<link rel="stylesheet" type="text/css" href="./css/mobile.css">
+	<script src="./js/mobile.js" type="text/javascript"></script>
+	<script>
+		//isNew=true
+	</script>
+</head>
+<body onload="fetchPage('homePage.html')">
+	<div id="page">
+		<div id="header">
+			<div style="display: flex;">
+				<a href="index.html" class="logo"><img style="height: 115px;" src="./images/E.S.T-removebg-preview.png" alt=""></a>
+				<ul id="navigation" style="display: flex; justify-content: center; align-items: center;">
+					<li class="selected">
+						<a onclick="fetchPage('homePage.html')">Home</a>
+					</li>
+					<li >
+						<a onclick="fetchPage('about.html')">About</a>
+					<li>
+						<a onclick="fetchPage('product.html')">Products</a>
+					</li>	
+					</li>
+					<li >
+						<a onclick="fetchPage('login.html')">Login</a>
+					</li>
+					<li>
+						<a onclick="fetchPage('contact.html')">Contact</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+	
+		<!--כאן היה התוכן הקודם-->
+		
+		<div id="mainContent" class="home">
+			פה נשים את מה שאנו רוצים
+		</div>
+		<div id="footer">
+			<div>
+				<div class="connect">
+					<a href="http://freewebsitetemplates.com/go/facebook/" class="facebook">facebook</a>
+					<a href="http://freewebsitetemplates.com/go/twitter/" class="twitter">twitter</a>
+					<a href="http://freewebsitetemplates.com/go/googleplus/" class="googleplus">googleplus</a>
+					<a href="http://pinterest.com/fwtemplates/" class="pinterest">pinterest</a>
+				</div>
+				<p>&copy; 2022 E.S.T Design. All Rights Reserved.</p>
+			</div>
+		</div>
+	</div>
+	<script>		
+		function fetchPage(whatPage, pageData = {}) {
+	 	fetch(whatPage)
+		 	.then(response => response.text())
+  			.then(async (data) => {
+				document.getElementById("mainContent").innerHTML = data;
+				console.log('setting page')
+				if(whatPage ==='product.html'){
+					fetch('/products').then(res=>res.json()).then(products => {
+						const productsContainer = document.getElementById('products');
+						const items = products.map(item => {
+							const productItem = document.createElement('div');
+							productItem.classList.add('productItem')
+							productItem.classList.add(item.category)
+							const img = document.createElement('img');
+							img.src = 'images/'+item.imgName;
+							img.classList.add('productItemImg')
+							const productName = document.createElement('div')
+							productName.innerText = item.name;
+							const price = document.createElement('div')
+							price.innerText = ` ש"ח `+item.price  ;
+							productItem.appendChild(img)
+							productItem.appendChild(productName)
+							productItem.appendChild(price)
+							productsContainer.appendChild(productItem)
+						})
+					})
+
+					const filterBtn = document.querySelector('#product-select');
+					filterBtn.addEventListener('change', function(){
+						document.querySelectorAll('.productItem').forEach(item => {
+							item.style.display = 'none';
+						})
+						const selection = this.value == "all" ? '' : '.' + this.value;
+						document.querySelectorAll('.productItem' + selection).forEach(item => {
+							item.style.display = 'initial';
+						})
+					})
+				}
+
+				if(whatPage === 'contact.html'){
+					const submitButton = document.querySelector('#submit[type="submit"]');
+					submitButton.addEventListener('click',async (e)=>{
+						e.preventDefault();
+						const name = document.querySelector('#name').value;
+						const email = document.querySelector('#email').value;
+						const subject = document.querySelector('#subject').value;
+						const content = document.querySelector('#content').value;
+
+						if(!name || !email || !subject || !content){
+							alert('חובה למלא את כל השדות')
+							return;
+						}
+
+						const data = {
+							name,
+							email,
+							subject,
+							content
+						}
+						try {
+							const result = await fetch('/contact',{
+								method: 'POST',
+								body: JSON.stringify(data),
+								headers: {
+									'Content-Type': 'application/json'
+								}});
+								const resultData = await result.json();
+								if(resultData._id){
+									fetchPage('thank-you.html')
+								} 
+							} catch(err){
+								alert(err)
+							}
+							
+					})
+					}
+
+				if(whatPage === 'login.html'){
+					const loginButton = document.querySelector('[type="submit"]');
+					loginButton.addEventListener('click',async (e)=>{
+						e.preventDefault();
+						const username = document.querySelector('#username').value;
+						const password = document.querySelector('#password').value;
+
+						if(!username || !password){
+							alert('חובה למלא את כל השדות')
+							return;
+						}
+
+						const data = {
+							username,
+							password,
+						}
+						try {
+							const result = await fetch('/login',{
+								method: 'POST',
+								body: JSON.stringify(data),
+								headers: {
+									'Content-Type': 'application/json'
+								}});
+							const resultData = await result.json();
+							if(resultData.user == 'user'){
+								await fetchPage('profile.html', resultData)
+							} 
+							if(resultData.user == 'admin'){
+								await fetchPage('admin.html', resultData)
+							} 
+						} catch (err) {
+							alert(err)
+						}
+							
+					})
+				}
+
+				if(whatPage === 'profile.html'){
+					document.getElementById('user-name').innerText = pageData.user;
+					fetch(`/orders/${pageData.user}`).then(res=>res.json()).then(orders=>{
+						const ordersContainer = document.getElementById('orders');
+						console.log(orders)
+						orders.map(order => {
+							const orderContainer = document.createElement('div');
+							orderContainer.classList.add('order')
+							const orderNumber = document.createElement('div')
+							orderNumber.innerText = order.number;
+							const orderPrice = document.createElement('div')
+							orderPrice.innerText = ` ש"ח `+order.totalPrice;
+							const orderStatus = document.createElement('div')
+							orderStatus.innerText = order.status;
+							orderContainer.appendChild(orderNumber)
+							orderContainer.appendChild(orderPrice)
+							orderContainer.appendChild(orderStatus)
+							ordersContainer.appendChild(orderContainer)
+						})
+					})
+				}
+				if(whatPage === 'admin.html'){
+					document.getElementById('user-name').innerText = pageData.user;
+					fetch(`/orders/${pageData.user}`).then(res=>res.json()).then(orders=>{
+						const ordersContainer = document.getElementById('orders');
+						console.log(orders)
+						orders.map(order => {
+							const orderContainer = document.createElement('div');
+							orderContainer.classList.add('order')
+							const orderNumber = document.createElement('div')
+							orderNumber.innerText = order.number;
+							const orderPrice = document.createElement('div')
+							orderPrice.innerText = ` ש"ח `+order.totalPrice;
+							const orderStatus = document.createElement('div')
+							orderStatus.innerText = order.status;
+							const username = document.createElement('div')
+							username.innerText = order.username;
+							orderContainer.appendChild(orderNumber)
+							orderContainer.appendChild(orderPrice)
+							orderContainer.appendChild(orderStatus)
+							orderContainer.appendChild(username)
+							ordersContainer.appendChild(orderContainer)
+						})
+					})
+
+					fetch(`/users`).then(res=>res.json()).then(users=>{
+						const userListContainer = document.getElementById('user-list');
+						console.log(users)
+						users.map(user => {
+							const usersContainer = document.createElement('div');
+							usersContainer.classList.add('user')
+							const username = document.createElement('div')
+							username.innerText = user.username;
+							const actions = document.createElement('div')
+							const editUser = document.createElement('button')
+							editUser.innerText = 'Edit';
+							const deleteUser = document.createElement('button')
+							deleteUser.innerText = 'Delete';
+							deleteUser.userId = user.username;
+							actions.appendChild(editUser) 
+							actions.appendChild(deleteUser)
+							usersContainer.appendChild(username)
+							usersContainer.appendChild(actions)
+							userListContainer.appendChild(usersContainer)
+
+							editUser.addEventListener('click', async ()=>{
+								document.getElementById('edit-user').style.display = 'block';
+								document.getElementById('edit-user-name').value = user.username;
+								document.getElementById('edit-user-name').disabled = true;
+								document.getElementById('edit-user-password').value = user.password;
+
+								document.getElementById('edit-user-btn').addEventListener('click', async (e)=>{
+								e.preventDefault();
+								const user = document.getElementById('edit-user-name').value;
+								const password = document.getElementById('edit-user-password').value;
+								const type = document.getElementById('edit-user-type').value;
+
+								await fetch(`/users/${user}`, {
+									method: 'PUT',
+									body: JSON.stringify({password, type}),
+									headers: {
+										'Content-Type': 'application/json'
+									}});
+								});
+							})
+
+							deleteUser.addEventListener('click', async (e)=>{
+								await fetch(`/users/${e.target.userId}`, {
+									method: 'DELETE'
+								});
+								userListContainer.removeChild(usersContainer);
+							})
+						})
+					})
+				}
+			});
+		}
+
+	</script>
+</body>
+</html>

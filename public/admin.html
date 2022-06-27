@@ -1,0 +1,56 @@
+<div id="body">
+    <div class="header">
+        <div>
+            <h1>Profile</h1>
+        </div>
+    </div>
+    <div class="admin-content">
+        <div id="admin">
+            <h1>Hello <span id="user-name"></span></h1>
+
+            <div class="section">
+                <div>
+                    <h1>Your orders:</h1>
+                </div>
+                <div id="orders">
+                    <div class="order bold">
+                        <div>מספר הזמנה</div>
+                        <div>סכום כולל</div>
+                        <div>סטטוס</div>
+                        <div>לקוח מזמין</div>
+                    </div>
+                </div>
+            </div>
+            <div class="section">
+                <div>
+                    <h1>Users:</h1>
+                </div>
+                <div id="user-list">
+                    <div class="user bold">
+                        <div>שם משתמש</div>
+                        <div>סוג משתמש</div>
+                    </div>
+                </div>
+            </div>
+            <form id="edit-user" style="display: none">
+                <input
+                    type="text"
+                    id="edit-user-name"
+                    name="login"
+                    placeholder="login"
+                />
+                <input
+                    type="password"
+                    id="edit-user-password"
+                    name="login"
+                    placeholder="password"
+                />
+                <select name="type" id="edit-user-type" form="edit-user">
+                    <option value="admin">Admin</option>
+                    <option value="user">User</option>
+                </select>
+                <button id="edit-user-btn">Edit user</button>
+            </form>
+        </div>
+    </div>
+</div>
