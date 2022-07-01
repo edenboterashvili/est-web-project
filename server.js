@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 
+/* ייבוא של המודלים של הסכימות של כל קולייקשן במונגו*/
 const { Furniture } = require('./models/furniture-schema');
 const { ContactForm } = require('./models/contact-schema');
 const { User } = require('./models/user-schema');
@@ -12,6 +13,7 @@ const PORT = 3000;
 app.use(express.static('public'));
 app.use(express.json());
 
+/*ייבוא משתמשים מהמונגו שעושים התחברות */
 app.get(`/users`, async (req, res) => {
     console.log('fetching users from mongoDB');
     const users = await User.find();
@@ -21,6 +23,7 @@ app.get(`/users`, async (req, res) => {
     res.json(users);
 });
 
+/*עריכה של משתמש בעמוד של המנהל */
 app.put(`/users/:username`, async (req, res) => {
     console.log('Editing a user');
     const { username } = req.params;
@@ -30,12 +33,13 @@ app.put(`/users/:username`, async (req, res) => {
     res.status(200).send();
 });
 
+/*ייבוא של המוצרים מהמונגו */
 app.get(`/products`, async (req, res) => {
     console.log('fetching products from mongoDB');
     const products = await Furniture.find({});
     res.json(products);
 });
-
+/*מייבא את ההזמנה של כל לקוח בשביל העמודה המיועדת בטבלת המנהל */
 app.get(`/orders/:username`, async (req, res) => {
     const username = req.params.username;
     console.log('fetching order of a user from mongoDB');
@@ -48,7 +52,7 @@ app.get(`/orders/:username`, async (req, res) => {
     }
 });
 
-// DELETE domain/users/avi
+// מחיקה של משתמש מעמוד המנהל
 app.delete('/users/:username', async (req, res) => {
     const username = req.params.username;
     console.log('deleting a user');
@@ -56,6 +60,7 @@ app.delete('/users/:username', async (req, res) => {
     res.status(200).send();
 });
 
+/*שולח את הנתונים ביצירת קשר למונגו */
 app.post('/contact', async (req, res) => {
     console.log('sending contact form to mongoDB');
     // console.log('req.body', req.body);
@@ -65,6 +70,7 @@ app.post('/contact', async (req, res) => {
     res.json(contactForm);
 });
 
+/*התחברות */
 app.post('/login', async (req, res) => {
     console.log('Trying to login');
     const user = await User.findOne({

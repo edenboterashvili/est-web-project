@@ -19,6 +19,8 @@
 				<a href="index.html" class="logo"><img style="height: 115px;" src="./images/E.S.T-removebg-preview.png" alt=""></a>
 				<ul id="navigation" style="display: flex; justify-content: center; align-items: center;">
 					<li class="selected">
+
+					<!--קריאות לעמודים בתפריט למעלה-->	
 						<a onclick="fetchPage('homePage.html')">Home</a>
 					</li>
 					<li >
@@ -37,10 +39,9 @@
 			</div>
 		</div>
 	
-		<!--כאן היה התוכן הקודם-->
+		
 		
 		<div id="mainContent" class="home">
-			פה נשים את מה שאנו רוצים
 		</div>
 		<div id="footer">
 			<div>
@@ -54,6 +55,7 @@
 			</div>
 		</div>
 	</div>
+	<!--יצירת גלריה בעמוד מוצרים וייבוא נתונים מהמונגו-->
 	<script>		
 		function fetchPage(whatPage, pageData = {}) {
 	 	fetch(whatPage)
@@ -81,7 +83,7 @@
 							productsContainer.appendChild(productItem)
 						})
 					})
-
+					/*סינון בעמוד מוצרים*/
 					const filterBtn = document.querySelector('#product-select');
 					filterBtn.addEventListener('change', function(){
 						document.querySelectorAll('.productItem').forEach(item => {
@@ -93,7 +95,7 @@
 						})
 					})
 				}
-
+				/*עמוד צור קשר- מילוי פרטים ושליחה למונגו*/
 				if(whatPage === 'contact.html'){
 					const submitButton = document.querySelector('#submit[type="submit"]');
 					submitButton.addEventListener('click',async (e)=>{
@@ -131,7 +133,7 @@
 							
 					})
 					}
-
+					/*חיבור למשתמשים */
 				if(whatPage === 'login.html'){
 					const loginButton = document.querySelector('[type="submit"]');
 					loginButton.addEventListener('click',async (e)=>{
@@ -168,7 +170,7 @@
 							
 					})
 				}
-
+				/*יצירת הטבלה בעמוד של הלקוח על ידי ייבוא ההזמנות מהמונגו*/
 				if(whatPage === 'profile.html'){
 					document.getElementById('user-name').innerText = pageData.user;
 					fetch(`/orders/${pageData.user}`).then(res=>res.json()).then(orders=>{
@@ -190,6 +192,7 @@
 						})
 					})
 				}
+				/*יצירת הטבלה בעמוד של המנהל על ידי ייבוא ההזמנות מהמונגו*/
 				if(whatPage === 'admin.html'){
 					document.getElementById('user-name').innerText = pageData.user;
 					fetch(`/orders/${pageData.user}`).then(res=>res.json()).then(orders=>{
@@ -234,6 +237,7 @@
 							usersContainer.appendChild(actions)
 							userListContainer.appendChild(usersContainer)
 
+							/*עריכה ומחיקה של משתמשים בעמוד מנהל*/
 							editUser.addEventListener('click', async ()=>{
 								document.getElementById('edit-user').style.display = 'block';
 								document.getElementById('edit-user-name').value = user.username;
